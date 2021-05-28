@@ -7,10 +7,6 @@ include!(concat!(env!("OUT_DIR"), "/kvm_constants.rs"));
 
 #[repr(C)]
 #[derive(Default, Debug)]
-pub struct Rflags(pub u64);
-
-#[repr(C)]
-#[derive(Default, Debug)]
 pub struct kvm_regs {
     pub rax: u64,
     pub rbx: u64,
@@ -29,7 +25,7 @@ pub struct kvm_regs {
     pub r14: u64,
     pub r15: u64,
     pub rip: u64,
-    pub rflags: Rflags,
+    pub rflags: u64,
 }
 
 #[repr(C)]

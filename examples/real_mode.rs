@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
     // Initialize VPCU registers.
     let mut regs = vcpu.get_regs()?;
     regs.rip = 0;
-    regs.rflags.0 = 0x2;
+    regs.rflags = 0x2;
     vcpu.set_regs(regs)?;
 
     // Initialize VPCU special registers.
