@@ -63,7 +63,7 @@ impl UserMem {
     }
 
     /// Allocate a zero-initialized memory region of `len` bytes and initialize the first bytes
-    /// with `init_len`.
+    /// with `init_from`.
     ///
     /// # Panics
     ///
@@ -72,8 +72,20 @@ impl UserMem {
         assert!(len >= init_from.len());
 
         let mut m = UserMem::new(len)?;
-        m.as_mut()[..init_from.len()].copy_from_slice(init_from);
+        m.load(PhysAddr(0), init_from);
         Ok(m)
+    }
+
+    /// Load the bytes stored in `data` into memory at physical address `addr`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `addr + data.len` is larger than the memory size `len`.
+    pub fn load(&mut self, addr: PhysAddr, data: &[u8]) {
+        assert!(self.len >= addr.0 as usize + data.len());
+
+        let addr = addr.0 as usize;
+        self.as_mut()[addr..addr + data.len()].copy_from_slice(data);
     }
 }
 
