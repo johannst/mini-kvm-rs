@@ -68,11 +68,11 @@ pub struct kvm_sregs {
     pub gdt: kvm_dtable,
     pub idt: kvm_dtable,
     pub cr0: u64,
-    cr2: u64,
+    pub cr2: u64,
     pub cr3: u64,
     pub cr4: u64,
     pub cr8: u64,
-    pub effer: u64,
+    pub efer: u64,
     pub apic_base: u64,
     pub interrupt_bitmap: [u64; 4],
 }
