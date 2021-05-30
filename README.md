@@ -15,12 +15,26 @@ The sources are structured as follows:
 
 ## Real Mode (16bit) example
 
+Runs the [real mode VM](./examples/real_mode.rs) with the [guest program](./guest/guest16.S).
+
 ```bash
 # Once: Build the guest binary image.
 make -C guest
 
 # Run the Real Mode example.
 cargo run --example real_mode
+```
+
+## Long Mode (64bit) example
+
+Runs the [long mode VM](./examples/long_mode.rs) with the [guest program](./guest/guest64.S).
+
+```bash
+# Once: Build the guest binary image.
+make -C guest
+
+# Run the Long Mode example.
+cargo run --example long_mode
 ```
 
 ## License
