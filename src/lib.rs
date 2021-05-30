@@ -7,6 +7,7 @@ pub mod kvm;
 pub mod kvm_sys;
 pub mod vcpu;
 pub mod vm;
+pub mod x86_64;
 
 /// Strong type representing physical addresses.
 pub struct PhysAddr(pub u64);
