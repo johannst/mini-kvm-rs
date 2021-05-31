@@ -76,7 +76,7 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     //        | (16K) |        | (16K) |
     // 0x8000 +-------+ <----- +-------+ 0x4000
     //
-    // PML4 : Pamge Map Level 4
+    // PML4 : Page Map Level 4
     // PDP  : Page Directory Pointer
     // PD   : Page Directory
     // PT   : Page Table
@@ -84,10 +84,7 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     // PML4, PDP, PD will contain a single entry at index 0.
     // PT will contain 4 page table entries (PTE) at index {0,1,2,3} -> 4 * 4K = 16K.
 
-    let mut w = |addr: PhysAddr, val: u64| {
-        let addr = addr.0 as usize;
-        mem.as_mut()[addr..addr + 8].copy_from_slice(&val.to_le_bytes());
-    };
+    let mut w = |addr: PhysAddr, val: u64| mem.load(addr, &val.to_le_bytes());
 
     // PML4E[0] refers to PDPE[0:4095].
     w(PhysAddr(0x0000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x1000);
