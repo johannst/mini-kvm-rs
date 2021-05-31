@@ -17,6 +17,8 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Build examples
-      run: cargo build --verbose --examples
+      run: |
+          make -C guest
+          cargo build --verbose --examples
     - name: Run tests
       run: cargo test --verbose
