@@ -1,4 +1,6 @@
-# kvm-rs
+# kvm-rs 
+
+[![Rust](https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml)
 
 A playground for the [`Kernel Virtual Machine
 (KVM)`](https://www.kernel.org/doc/html/latest/virt/kvm/index.html) in rust to
