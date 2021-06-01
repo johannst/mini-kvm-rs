@@ -1,4 +1,4 @@
-# kvm-rs 
+# kvm-rs
 
 [![Rust](https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml)
 
