@@ -1,8 +1,17 @@
+//! VCPU system ioctls.
+
 use std::fs;
 use std::io;
 
 use crate::{ioctl, kvm_sys, KvmRun};
 
+/// Exit reasons for the [`Vcpu::kvm_run`][crate::vcpu::Vcpu::kvm_run] function.
+///
+/// Details for the different exit reasons can be found in the [`kvm_run`
+/// structure][kvm-run-struct] description.
+///
+/// [kvm-run]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-run
+/// [kvm-run-struct]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#the-kvm-run-structure
 pub enum KvmExit<'cpu> {
     Halt,
     IoIn(u16, &'cpu mut [u8]),
@@ -11,6 +20,13 @@ pub enum KvmExit<'cpu> {
     MmioWrite(u64, &'cpu [u8]),
 }
 
+/// Wrapper for VCPU ioctls.
+///
+/// Representation of the file descriptor obtained by the [`KVM_CREATE_VCPU`][kvm-create-vcpu] ioctl.
+/// This wrapper provides access to the `VCPU ioctls` as described in [KVM API][kvm].
+///
+/// [kvm]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#general-description
+/// [kvm-create-vcpu]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-create-vcpu
 pub struct Vcpu {
     vcpu: fs::File,
     kvm_run: KvmRun,
@@ -21,6 +37,10 @@ impl Vcpu {
         Vcpu { vcpu, kvm_run }
     }
 
+    /// Get the general purpose registers with the [`KVM_GET_REGS`][kvm-get-regs] ioctl in form of
+    /// [`kvm_regs`](crate::kvm_sys::kvm_regs).
+    ///
+    /// [kvm-get-regs]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-get-regs
     pub fn get_regs(&self) -> io::Result<kvm_sys::kvm_regs> {
         let mut regs = kvm_sys::kvm_regs::default();
         ioctl(
@@ -31,10 +51,18 @@ impl Vcpu {
         Ok(regs)
     }
 
+    /// Set the general purpose registers with the [`KVM_SET_REGS`][kvm-set-regs] ioctl in form of
+    /// [`kvm_regs`](crate::kvm_sys::kvm_regs).
+    ///
+    /// [kvm-set-regs]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-set-regs
     pub fn set_regs(&self, regs: kvm_sys::kvm_regs) -> io::Result<()> {
         ioctl(&self.vcpu, kvm_sys::KVM_SET_REGS, &regs as *const _ as u64).map(|_| ())
     }
 
+    /// Get the special registers with the [`KVM_GET_SREGS`][kvm-get-sregs] ioctl in form of
+    /// [`kvm_sregs`](crate::kvm_sys::kvm_sregs).
+    ///
+    /// [kvm-get-sregs]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-get-sregs
     pub fn get_sregs(&self) -> io::Result<kvm_sys::kvm_sregs> {
         let mut sregs = kvm_sys::kvm_sregs::default();
         ioctl(
@@ -45,6 +73,10 @@ impl Vcpu {
         Ok(sregs)
     }
 
+    /// Set the special registers with the [`KVM_SET_SREGS`][kvm-set-sregs] ioctl in form of
+    /// [`kvm_sregs`](crate::kvm_sys::kvm_sregs).
+    ///
+    /// [kvm-set-sregs]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-set-sregs
     pub fn set_sregs(&self, sregs: kvm_sys::kvm_sregs) -> io::Result<()> {
         ioctl(
             &self.vcpu,
@@ -54,6 +86,10 @@ impl Vcpu {
         .map(|_| ())
     }
 
+    /// Run the guest VCPU with the [`KVM_RUN`][kvm-run] ioctl until it exits with one of the exit
+    /// reasons described in [`KvmExit`](crate::vcpu::KvmExit).
+    ///
+    /// [kvm-run]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-run
     pub fn run(&mut self) -> io::Result<KvmExit<'_>> {
         ioctl(&self.vcpu, kvm_sys::KVM_RUN, 0)?;
 

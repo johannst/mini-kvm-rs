@@ -1,3 +1,5 @@
+//! `x86_64` flags and bitfields.
+
 /* Rflags Register */
 
 /// Carry flag.
@@ -125,6 +127,12 @@ pub const CR4_LA57: u64 = 1 << 5;
 
 /* Extended Feature Enable Register (EFER) */
 
+/// Extended Feature Enable Register MSR number.
+///
+/// MSR number used with the [`rdmsr`][msr] and [`wrmsr`][msr] instructions to read/write the
+/// `EFER` model specific register.
+///
+/// [msr]: https://johannst.github.io/notes/arch/x86_64.html#model-specific-register-msr
 pub const MSR_EFER: u64 = 0xc000_0080;
 
 /// Long Mode Enable.

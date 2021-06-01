@@ -1,3 +1,7 @@
+//! Definitions of the system header [`<linux/kvm.h>`][kvm-h].
+//!
+//! [kvm-h]: https://elixir.bootlin.com/linux/latest/source/include/uapi/linux/kvm.h
+
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 #![allow(dead_code)]
