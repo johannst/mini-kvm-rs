@@ -5,7 +5,9 @@ use crate::{ioctl, kvm_sys, KvmRun};
 
 pub enum KvmExit<'cpu> {
     Halt,
+    IoIn(u16, &'cpu mut [u8]),
     IoOut(u16, &'cpu [u8]),
+    MmioRead(u64, &'cpu mut [u8]),
     MmioWrite(u64, &'cpu [u8]),
 }
 
@@ -52,10 +54,10 @@ impl Vcpu {
         .map(|_| ())
     }
 
-    pub fn run(&self) -> io::Result<KvmExit> {
+    pub fn run(&mut self) -> io::Result<KvmExit> {
         ioctl(&self.vcpu, kvm_sys::KVM_RUN, 0)?;
 
-        let kvm_run = self.kvm_run.as_ref();
+        let kvm_run = self.kvm_run.as_mut();
 
         match kvm_run.exit_reason as u64 {
             kvm_sys::KVM_EXIT_HLT => Ok(KvmExit::Halt),
@@ -63,31 +65,32 @@ impl Vcpu {
                 // Safe to use union `io` field, as Kernel instructed us to.
                 let io = unsafe { kvm_run.inner.io };
 
-                let kvm_run_ptr = kvm_run as *const kvm_sys::kvm_run as *const u8;
+                let kvm_run_ptr = kvm_run as *mut kvm_sys::kvm_run as *mut u8;
 
                 // Create IO buffer located at `kvm_run + io.offset`.
                 let data = unsafe {
-                    std::slice::from_raw_parts(
+                    std::slice::from_raw_parts_mut(
                         kvm_run_ptr.offset(io.data_offset as isize),
                         io.count /* num blocks */ as usize * io.size /* bytes per block */ as usize,
                     )
                 };
 
                 match io.direction as u64 {
-                    kvm_sys::KVM_EXIT_IO_IN => todo!("KVM_EXIT_IO_IN not implemented!"),
+                    kvm_sys::KVM_EXIT_IO_IN => Ok(KvmExit::IoIn(io.port, data)),
                     kvm_sys::KVM_EXIT_IO_OUT => Ok(KvmExit::IoOut(io.port, data)),
                     _ => unreachable!(),
                 }
             }
             kvm_sys::KVM_EXIT_MMIO => {
                 // Safe to use union `mmio` filed, as Kernel instructed us to.
-                let mmio = unsafe { &kvm_run.inner.mmio };
+                let mmio = unsafe { &mut kvm_run.inner.mmio };
                 let len = mmio.len as usize;
 
-                // Only support write at the moment.
-                assert_ne!(0, mmio.is_write);
-
-                Ok(KvmExit::MmioWrite(mmio.phys_addr, &mmio.data[..len]))
+                match mmio.is_write {
+                    0 => Ok(KvmExit::MmioRead(mmio.phys_addr, &mut mmio.data[..len])),
+                    1 => Ok(KvmExit::MmioWrite(mmio.phys_addr, &mmio.data[..len])),
+                    _ => unreachable!(),
+                }
             }
             r @ _ => {
                 todo!("KVM_EXIT_... (exit_reason={}) not implemented!", r)

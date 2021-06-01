@@ -126,7 +126,7 @@ impl KvmRun {
             libc::mmap(
                 std::ptr::null_mut(),
                 len,
-                libc::PROT_READ,
+                libc::PROT_READ | libc::PROT_WRITE,
                 libc::MAP_SHARED,
                 vcpu.as_raw_fd(),
                 0,
@@ -153,6 +153,12 @@ impl ops::Drop for KvmRun {
 
 impl AsRef<kvm_sys::kvm_run> for KvmRun {
     fn as_ref(&self) -> &kvm_sys::kvm_run {
-        unsafe { &(*self.ptr) }
+        unsafe { & *(self.ptr as *const kvm_sys::kvm_run) }
+    }
+}
+
+impl AsMut<kvm_sys::kvm_run> for KvmRun {
+    fn as_mut(&mut self) -> &mut kvm_sys::kvm_run {
+        unsafe { &mut *(self.ptr as *mut kvm_sys::kvm_run) }
     }
 }
