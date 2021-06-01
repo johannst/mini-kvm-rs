@@ -3,6 +3,7 @@ use std::io;
 use std::ops;
 use std::os::unix::io::AsRawFd;
 
+pub mod fmt;
 pub mod kvm;
 pub mod kvm_sys;
 pub mod vcpu;
