@@ -7,6 +7,11 @@
     mov rcx, [rip + msg_len]    // Len of string.
     rep outsb                   // Write ds:rsi to output port rdx.
 
+    // Trigger `KVM_EXIT_IO:KVM_EXIT_IO_IN` by reading byte to memory from input port.
+    mov dx, 0x1000          // Input port.
+    lea di, [in_dest]       // Destination address.
+    insb                    // Read byte from input port dx to ds:di.
+
     // Trigger `KVM_EXIT_HLT`.
     hlt
 
@@ -15,3 +20,6 @@ msg:
     .asciz "Hello from Long Mode!\n"
 msg_len:
     .byte .-msg
+
+in_dest:
+    .byte 0x00

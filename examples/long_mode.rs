@@ -126,7 +126,7 @@ fn setup_long_mode(sregs: &mut kvm_sys::kvm_sregs, mem: &mut UserMem) {
 fn main() -> std::io::Result<()> {
     // Create VM & VCPU.
     let vm = Kvm::new()?.create_vm()?;
-    let vcpu = vm.create_vpcu(0)?;
+    let mut vcpu = vm.create_vpcu(0)?;
 
     // Map memory for guest VM.
     let mut mem = UserMem::new(0x8000)?;
@@ -155,9 +155,19 @@ fn main() -> std::io::Result<()> {
     while let Ok(exit) = vcpu.run() {
         match exit {
             KvmExit::Halt => break,
+            KvmExit::IoIn(port, data) => {
+                println!("IO_IN: port={} len={}", port, data.len());
+                // Provide some input data.
+                data.fill(0xaa);
+            }
             KvmExit::IoOut(_port, data) => {
                 let s = std::str::from_utf8(data).unwrap();
                 print!("{}", s);
+            }
+            KvmExit::MmioRead(addr, data) => {
+                println!("MMIO_READ: addr={:#x} len={}", addr, data.len());
+                // Provide some read data.
+                data.fill(0xbb);
             }
             KvmExit::MmioWrite(addr, data) => {
                 println!(
