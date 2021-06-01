@@ -54,7 +54,7 @@ impl Vcpu {
         .map(|_| ())
     }
 
-    pub fn run(&mut self) -> io::Result<KvmExit> {
+    pub fn run(&mut self) -> io::Result<KvmExit<'_>> {
         ioctl(&self.vcpu, kvm_sys::KVM_RUN, 0)?;
 
         let kvm_run = self.kvm_run.as_mut();
