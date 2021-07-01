@@ -3,6 +3,7 @@ use std::io;
 use std::ops;
 use std::os::unix::io::AsRawFd;
 
+pub mod cap;
 mod fmt;
 pub mod kvm;
 pub mod kvm_sys;
@@ -154,7 +155,7 @@ impl ops::Drop for KvmRun {
 
 impl AsRef<kvm_sys::kvm_run> for KvmRun {
     fn as_ref(&self) -> &kvm_sys::kvm_run {
-        unsafe { & *(self.ptr as *const kvm_sys::kvm_run) }
+        unsafe { &*(self.ptr as *const kvm_sys::kvm_run) }
     }
 }
 

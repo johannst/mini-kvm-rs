@@ -4,8 +4,9 @@ use std::fs;
 use std::io;
 use std::os::unix::io::FromRawFd;
 
-use crate::{libcret, ioctl, kvm_sys};
+use crate::cap::{CapBool, CapInt};
 use crate::vm::Vm;
+use crate::{ioctl, kvm_sys, libcret};
 
 /// Wrapper for `/dev/kvm` ioctls.
 ///
@@ -48,5 +49,25 @@ impl Kvm {
         let vcpu_mmap_size = self.get_vpcu_mmap_size()?;
 
         Ok(Vm::new(vm, vcpu_mmap_size))
+    }
+
+    /// Check availability of an extension with the [`KVM_CHECK_EXTENSION`][kvm-check-extension]
+    /// ioctl.
+    ///
+    /// [kvm-check-extension]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-check-extension
+    pub fn check_extenstion(&self, cap: CapBool) -> bool {
+        let ret = ioctl(&self.kvm, kvm_sys::KVM_CHECK_EXTENSION, cap.into());
+
+        matches!(ret, Ok(ret) if ret > 0)
+    }
+
+    /// Check availability of an extension with the [`KVM_CHECK_EXTENSION`][kvm-check-extension]
+    /// ioctl.
+    ///
+    /// [kvm-check-extension]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-check-extension
+    pub fn check_extenstion_int(&self, cap: CapInt) -> i32 {
+        let ret = ioctl(&self.kvm, kvm_sys::KVM_CHECK_EXTENSION, cap.into());
+
+        ret.unwrap_or(0)
     }
 }

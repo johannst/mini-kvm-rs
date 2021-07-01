@@ -56,6 +56,32 @@ int main() {
     printf("pub(crate) const KVM_EXIT_IO_OUT : u64 = 0x%x;\n", KVM_EXIT_IO_OUT);
     printf("pub(crate) const KVM_EXIT_MMIO : u64 = 0x%x;\n", KVM_EXIT_MMIO);
 
+    /* Capabilities */
+
+    // Can be used on /dev/kvm fd and VM fd (if KVM_CAP_CHECK_EXTENSION_VM is available).
+    //
+    // param: capability to query KVM_CAP_*
+    // ret  : 0 unsupported, 1 supported (some return >=1 returning number for cap)
+    printf("pub(crate) const KVM_CHECK_EXTENSION : u64 = 0x%x;\n", KVM_CHECK_EXTENSION);
+
+    /* Bool Capabilities */
+
+    // Check if capabilities can be checked in VM fd.
+    //
+    // ret: 0 unsupported, 1 supported
+    printf("pub(crate) const KVM_CAP_CHECK_EXTENSION_VM : u64 = 0x%x;\n", KVM_CAP_CHECK_EXTENSION_VM);
+
+    /* Int Capabilities */
+
+    // Check the recommended max amount of VCPUs.
+    //
+    // ret: 0 unsupported, >0 #vcpus
+    printf("pub(crate) const KVM_CAP_NR_VCPUS : u64 = 0x%x;\n", KVM_CAP_NR_VCPUS);
+    // Check the possible max amount of VCPUs.
+    //
+    // ret: 0 unsupported, >0 #vcpus
+    printf("pub(crate) const KVM_CAP_MAX_VCPUS : u64 = 0x%x;\n", KVM_CAP_MAX_VCPUS);
+
     /* Testing constants */
 
     printf("#[cfg(test)] const TEST_KVM_REGS_SIZE : usize = %ld;\n", sizeof(struct kvm_regs));
