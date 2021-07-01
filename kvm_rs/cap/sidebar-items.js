@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CapBool","Definition of capabilities that return a bool value indicating whether the capability is supported or not."],["CapInt","Definition of capabilities that return an integer value indicating the amount of the queried capability."]]});
