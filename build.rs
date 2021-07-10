@@ -22,4 +22,8 @@ fn main() {
         .output()
         .unwrap();
     std::io::stdout().write_all(&o.stdout).unwrap();
+    std::io::stderr().write_all(&o.stderr).unwrap();
+
+    // Ensure `make` was successfull.
+    assert!(o.status.success());
 }
