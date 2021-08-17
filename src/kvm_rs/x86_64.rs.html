@@ -1,7 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/x86_64.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>x86_64.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../kvm_rs/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../kvm_rs/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -155,161 +154,170 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
-</pre><div class="example-wrap"><pre class="rust ">
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+</pre><pre class="rust">
 <span class="doccomment">//! `x86_64` flags and bitfields.</span>
 
-<span class="comment">/* Rflags Register */</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">x86_64</span>::<span class="kw-2">*</span>;
 
-<span class="doccomment">/// Carry flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_CF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
-<span class="doccomment">/// Parity flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_PF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
-<span class="doccomment">/// Adjust flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_AF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
-<span class="doccomment">/// Zero flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_ZF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">6</span>;
-<span class="doccomment">/// Sign flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_SF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>;
-<span class="doccomment">/// Sign flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_IF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">9</span>;
-<span class="doccomment">/// Direction flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_DF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>;
-<span class="doccomment">/// Overflow flag.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_OF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">11</span>;
-<span class="doccomment">/// I/O privilege level.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_IOPL</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0b11</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">12</span>;
-<span class="doccomment">/// Alignment check.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_AC</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">18</span>;
+<span class="attribute">#[<span class="ident">rustfmt::skip</span>]</span>
+<span class="kw">mod</span> <span class="ident">x86_64</span> {
+    <span class="comment">/* Rflags Register */</span>
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_cf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_CF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">0</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_pf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_PF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_af</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_AF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">4</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_zf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_ZF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">6</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_sf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_SF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">7</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_if</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_IF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">9</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_df</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_DF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">10</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_of</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_OF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">11</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_iopl</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_IOPL</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">12</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_ac</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_AC</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">18</span> }
+    <span class="doccomment">/// Carry flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_CF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
+    <span class="doccomment">/// Parity flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_PF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
+    <span class="doccomment">/// Adjust flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_AF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
+    <span class="doccomment">/// Zero flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_ZF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">6</span>;
+    <span class="doccomment">/// Sign flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_SF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>;
+    <span class="doccomment">/// Sign flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_IF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">9</span>;
+    <span class="doccomment">/// Direction flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_DF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>;
+    <span class="doccomment">/// Overflow flag.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_OF</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">11</span>;
+    <span class="doccomment">/// I/O privilege level.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_IOPL</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0b11</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">12</span>;
+    <span class="doccomment">/// Alignment check.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RFLAGS_AC</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">18</span>;
 
-<span class="comment">/* Segment Selector */</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_cf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_CF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">0</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_pf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_PF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_af</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_AF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">4</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_zf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_ZF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">6</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_sf</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_SF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">7</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_if</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_IF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">9</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_df</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_DF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">10</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_of</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_OF</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">11</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_iopl</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_IOPL</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">12</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">rflags_ac</span>(<span class="ident">r</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>   { (<span class="ident">r</span> <span class="op">&amp;</span> <span class="ident">RFLAGS_AC</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">18</span> }
 
-<span class="doccomment">/// Requested privilege level.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Privilege level of the segment selector, where `0` is the most privileged mode and `3` the</span>
-<span class="doccomment">/// least.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_RPL</span> : <span class="ident">u16</span> <span class="op">=</span> <span class="number">0b11</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
-<span class="doccomment">/// Table indicator.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// | TI | Table |</span>
-<span class="doccomment">/// |----|-------|</span>
-<span class="doccomment">/// | 0  | GDT   |</span>
-<span class="doccomment">/// | 1  | LDT   |</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_TI</span> : <span class="ident">u16</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
-<span class="doccomment">/// Table index.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Index into the `GDT` or `LDT` table to select the segment descriptor. `GDT.base + 8 * index`</span>
-<span class="doccomment">/// gives the address of the segment descriptor (times `8` because every segment descriptor is `8</span>
-<span class="doccomment">/// byte`).</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_INDEX</span> : <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x1fff</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
+    <span class="comment">/* Segment Selector */</span>
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_rpl</span>(<span class="ident">s</span> : <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>   { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_RPL</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">0</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_ti</span>(<span class="ident">s</span> : <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>    { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_TI</span>)    <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span> }
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_index</span>(<span class="ident">s</span> : <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_INDEX</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">3</span> }
+    <span class="doccomment">/// Requested privilege level.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Privilege level of the segment selector, where `0` is the most privileged mode and `3` the</span>
+    <span class="doccomment">/// least.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_RPL</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0b11</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
+    <span class="doccomment">/// Table indicator.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// | TI | Table |</span>
+    <span class="doccomment">/// |----|-------|</span>
+    <span class="doccomment">/// | 0  | GDT   |</span>
+    <span class="doccomment">/// | 1  | LDT   |</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_TI</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
+    <span class="doccomment">/// Table index.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Index into the `GDT` or `LDT` table to select the segment descriptor. `GDT.base + 8 * index`</span>
+    <span class="doccomment">/// gives the address of the segment descriptor (times `8` because every segment descriptor is `8</span>
+    <span class="doccomment">/// byte`).</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SEG_SELECTOR_INDEX</span>: <span class="ident">u16</span> <span class="op">=</span> <span class="number">0x1fff</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
 
-<span class="comment">/* Control Register CR0 (operation mode &amp; state of the processor) */</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_rpl</span>(<span class="ident">s</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>   { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_RPL</span>)   <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">0</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_ti</span>(<span class="ident">s</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>    { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_TI</span>)    <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span> }
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">seg_selector_index</span>(<span class="ident">s</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> { (<span class="ident">s</span> <span class="op">&amp;</span> <span class="ident">SEG_SELECTOR_INDEX</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">3</span> }
 
-<span class="doccomment">/// Protection Enable.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Enables `protected mode` when set and `real-address mode` when cleared. This enables</span>
-<span class="doccomment">/// `segment-level protection` not paging.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_PE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
-<span class="doccomment">/// Monitor Coprocessor.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_MP</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
-<span class="doccomment">/// Emulation.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set indicates the process does not have a FPU. FPU instructions will generate an exception</span>
-<span class="doccomment">/// that software can emulate the instruction.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_EM</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
-<span class="doccomment">/// Task Switched.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_TS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
-<span class="doccomment">/// Extension Type.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_ET</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
-<span class="doccomment">/// Numeric Error.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_NE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
-<span class="doccomment">/// Write Protect.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set supervisor-level procedures can&#39;t write to read-only pages.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_WP</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>;
-<span class="doccomment">/// Alignment Mask.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Enables alignment check for `CPL=3`, check is only done if the [AC</span>
-<span class="doccomment">/// bit](crate::x86_64::RFLAGS_AC) of the `rflags` register ist set.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_AM</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">18</span>;
-<span class="doccomment">/// Not Write-Torugh.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_NW</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">29</span>;
-<span class="doccomment">/// Cachine disable.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_CD</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>;
-<span class="doccomment">/// Paging.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Enables paging when set, requires [CR0_PE](crate::x86_64::CR0_PE) to be set as well.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_PG</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span>;
+    <span class="comment">/* Control Register CR0 (operation mode &amp; state of the processor) */</span>
 
-<span class="comment">/* Control Register CR3 (paging information)
- *
- * Holds the physical base address of the first paging structure. The 12 lower bytes of the base
- * address are assumed to be 0 and hence the first paging structure must be aligned to a 4K
- * boundary.
- */</span>
+    <span class="doccomment">/// Protection Enable.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Enables `protected mode` when set and `real-address mode` when cleared. This enables</span>
+    <span class="doccomment">/// `segment-level protection` not paging.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_PE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
+    <span class="doccomment">/// Monitor Coprocessor.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_MP</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
+    <span class="doccomment">/// Emulation.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set indicates the process does not have a FPU. FPU instructions will generate an exception</span>
+    <span class="doccomment">/// that software can emulate the instruction.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_EM</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>;
+    <span class="doccomment">/// Task Switched.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_TS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
+    <span class="doccomment">/// Extension Type.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_ET</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
+    <span class="doccomment">/// Numeric Error.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_NE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
+    <span class="doccomment">/// Write Protect.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set supervisor-level procedures can&#39;t write to read-only pages.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_WP</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span>;
+    <span class="doccomment">/// Alignment Mask.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Enables alignment check for `CPL=3`, check is only done if the [AC</span>
+    <span class="doccomment">/// bit](crate::x86_64::RFLAGS_AC) of the `rflags` register ist set.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_AM</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">18</span>;
+    <span class="doccomment">/// Not Write-Torugh.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_NW</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">29</span>;
+    <span class="doccomment">/// Cachine disable.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_CD</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>;
+    <span class="doccomment">/// Paging.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Enables paging when set, requires [CR0_PE](crate::x86_64::CR0_PE) to be set as well.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR0_PG</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span>;
 
-<span class="doccomment">/// Mask for physical base address of paging structure.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PAGE_BASE_MASK</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0xffff_ffff_ffff_0000</span>;
+    <span class="comment">/* Control Register CR3 (paging information)
+     *
+     * Holds the physical base address of the first paging structure. The 12 lower bytes of the base
+     * address are assumed to be 0 and hence the first paging structure must be aligned to a 4K
+     * boundary.
+     */</span>
 
-<span class="doccomment">/// Page-level Write-Through.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PWT</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
-<span class="doccomment">/// Page-level Cache Disable.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PCD</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
+    <span class="doccomment">/// Mask for physical base address of paging structure.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PAGE_BASE_MASK</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0xffff_ffff_ffff_0000</span>;
 
-<span class="comment">/* Control Register CR4 (flags for arch extenstions processor capabilities) */</span>
+    <span class="doccomment">/// Page-level Write-Through.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PWT</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">3</span>;
+    <span class="doccomment">/// Page-level Cache Disable.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR3_PCD</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">4</span>;
 
-<span class="doccomment">/// Physical Address Extenstion.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set enables paging to produce physicall addresses with more than 32 bits. Required before</span>
-<span class="doccomment">/// entering `long mode`.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR4_PAE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
-<span class="doccomment">/// 57-bit Linear Addresses.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set in `long mode` enables `5-level` paging to translate `57-bit` linear addresses. When</span>
-<span class="doccomment">/// cleared use `4-level` paging to translate `48-bit` linear addresses.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR4_LA57</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
+    <span class="comment">/* Control Register CR4 (flags for arch extenstions processor capabilities) */</span>
 
-<span class="comment">/* Extended Feature Enable Register (EFER) */</span>
+    <span class="doccomment">/// Physical Address Extenstion.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set enables paging to produce physicall addresses with more than 32 bits. Required before</span>
+    <span class="doccomment">/// entering `long mode`.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR4_PAE</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
+    <span class="doccomment">/// 57-bit Linear Addresses.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set in `long mode` enables `5-level` paging to translate `57-bit` linear addresses. When</span>
+    <span class="doccomment">/// cleared use `4-level` paging to translate `48-bit` linear addresses.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CR4_LA57</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>;
 
-<span class="doccomment">/// Extended Feature Enable Register MSR number.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// MSR number used with the [`rdmsr`][msr] and [`wrmsr`][msr] instructions to read/write the</span>
-<span class="doccomment">/// `EFER` model specific register.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// [msr]: https://johannst.github.io/notes/arch/x86_64.html#model-specific-register-msr</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MSR_EFER</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0xc000_0080</span>;
+    <span class="comment">/* Extended Feature Enable Register (EFER) */</span>
 
-<span class="doccomment">/// Long Mode Enable.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set enables long mode operations.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EFER_LME</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>;
-<span class="doccomment">/// Long Mode Active (readonly).</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// When set indicates long mode is active.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EFER_LMA</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>;
+    <span class="doccomment">/// Extended Feature Enable Register MSR number.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// MSR number used with the [`rdmsr`][msr] and [`wrmsr`][msr] instructions to read/write the</span>
+    <span class="doccomment">/// `EFER` model specific register.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [msr]: https://johannst.github.io/notes/arch/x86_64.html#model-specific-register-msr</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MSR_EFER</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0xc000_0080</span>;
 
-<span class="comment">/* Paging */</span>
+    <span class="doccomment">/// Long Mode Enable.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set enables long mode operations.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EFER_LME</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>;
+    <span class="doccomment">/// Long Mode Active (readonly).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When set indicates long mode is active.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EFER_LMA</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>;
 
-<span class="doccomment">/// Page entry present.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PAGE_ENTRY_PRESENT</span> : <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
-<span class="doccomment">/// Page region read/write.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// If set, region reference by paging entry is writeable.</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PAGE_RENTRY_RW</span> : <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
+    <span class="comment">/* Paging */</span>
+
+    <span class="doccomment">/// Page entry present.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PAGE_ENTRY_PRESENT</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">0</span>;
+    <span class="doccomment">/// Page region read/write.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If set, region reference by paging entry is writeable.</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">PAGE_RENTRY_RW</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
+}
 </pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvm_rs" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvm_rs" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
