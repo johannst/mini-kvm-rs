@@ -57,6 +57,7 @@ fn setup_long_mode_segments(sregs: &mut kvm_sys::kvm_sregs) {
     data_seg(&mut sregs.es);
 }
 
+#[rustfmt::skip]
 fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     assert_eq!(0x8000, mem.as_ref().len());
 

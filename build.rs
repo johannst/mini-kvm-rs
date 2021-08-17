@@ -1,6 +1,6 @@
 use std::env;
-use std::path::Path;
 use std::io::Write;
+use std::path::Path;
 
 fn main() {
     // Generate KVM constants from the system header <linux/kvm.h>.

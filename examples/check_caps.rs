@@ -2,6 +2,7 @@ use kvm_rs::cap::CapBool::*;
 use kvm_rs::cap::CapInt::*;
 use kvm_rs::kvm::Kvm;
 
+#[rustfmt::skip]
 fn main() -> std::io::Result<()> {
     let kvm = Kvm::new()?;
 
