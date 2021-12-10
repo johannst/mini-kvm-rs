@@ -155,5 +155,5 @@ mod x86_64 {
     /// Page region read/write.
     ///
     /// If set, region reference by paging entry is writeable.
-    pub const PAGE_RENTRY_RW: u64 = 1 << 1;
+    pub const PAGE_ENTRY_RW: u64 = 1 << 1;
 }

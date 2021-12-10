@@ -88,21 +88,21 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     let mut w = |addr: PhysAddr, val: u64| mem.load(addr, &val.to_le_bytes());
 
     // PML4E[0] refers to PDPE[0:4095].
-    w(PhysAddr(0x0000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x1000);
+    w(PhysAddr(0x0000), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x1000);
     // PDPE[0] refers to PDE[0:4095].
-    w(PhysAddr(0x1000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x2000);
+    w(PhysAddr(0x1000), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x2000);
     // PDE[0] refers to PTE[0:4095].
-    w(PhysAddr(0x2000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x3000);
+    w(PhysAddr(0x2000), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x3000);
 
     // PTE[0] maps Virt [0x0000:0x0fff] -> Phys [0x4000:0x4fff].
     // Just because we can, map this page readonly, as we loaded our guest sw here.
     w(PhysAddr(0x3000), PAGE_ENTRY_PRESENT | 0x4000);
     // PTE[1] maps Virt [0x1000:0x1fff] -> Phys [0x5000:0x5fff].
-    w(PhysAddr(0x3008), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x5000);
+    w(PhysAddr(0x3008), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x5000);
     // PTE[2] maps Virt [0x2000:0x2fff] -> Phys [0x6000:0x6fff].
-    w(PhysAddr(0x3010), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x6000);
+    w(PhysAddr(0x3010), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x6000);
     // PTE[3] maps Virt [0x3000:0x3fff] -> Phys [0x7000:0x7fff].
-    w(PhysAddr(0x3018), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x7000);
+    w(PhysAddr(0x3018), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x7000);
 
     // Return address of PML4.
     PhysAddr(0x0000)
