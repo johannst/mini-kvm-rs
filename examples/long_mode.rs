@@ -95,7 +95,8 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     w(PhysAddr(0x2000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x3000);
 
     // PTE[0] maps Virt [0x0000:0x0fff] -> Phys [0x4000:0x4fff].
-    w(PhysAddr(0x3000), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x4000);
+    // Just because we can, map this page readonly, as we loaded our guest sw here.
+    w(PhysAddr(0x3000), PAGE_ENTRY_PRESENT | 0x4000);
     // PTE[1] maps Virt [0x1000:0x1fff] -> Phys [0x5000:0x5fff].
     w(PhysAddr(0x3008), PAGE_ENTRY_PRESENT | PAGE_RENTRY_RW | 0x5000);
     // PTE[2] maps Virt [0x2000:0x2fff] -> Phys [0x6000:0x6fff].
