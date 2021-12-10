@@ -12,6 +12,12 @@
     lea di, [in_dest]       // Destination address.
     insb                    // Read byte from input port dx to ds:di.
 
+    // Write to allocated virtual addresses.
+    mov byte ptr ds:[0x2000], 0xaa
+    mov byte ptr ds:[0x2001], 0xbb
+    mov byte ptr ds:[0x2002], 0xcc
+    mov byte ptr ds:[0x2003], 0xdd
+
     // Trigger `KVM_EXIT_HLT`.
     hlt
 

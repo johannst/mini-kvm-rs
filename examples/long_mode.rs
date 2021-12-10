@@ -6,6 +6,7 @@ use kvm_rs::{PhysAddr, UserMem};
 
 fn setup_long_mode_segments(sregs: &mut kvm_sys::kvm_sregs) {
     let code_seg = |seg: &mut kvm_sys::kvm_segment| {
+        // Segment base address (unused in 64bit).
         seg.base = 0x0;
         // Limit (unused in 64bit).
         seg.limit = 0x0;
@@ -28,6 +29,7 @@ fn setup_long_mode_segments(sregs: &mut kvm_sys::kvm_sregs) {
     };
 
     let data_seg = |seg: &mut kvm_sys::kvm_segment| {
+        // Segment base address (unused in 64bit).
         seg.base = 0x0;
         // Limit (unused in 64bit).
         seg.limit = 0x0;
@@ -181,6 +183,14 @@ fn main() -> std::io::Result<()> {
             }
         };
     }
+
+    // The guest writes at virtual address [0x2000 - 0x2003] which will be visible in physical
+    // memory at [0x6000 - 0x6003] due to the paging structure we setup.
+    // See `setup_long_mode_4level_paging` above for details.
+    assert_eq!(
+        &mem.as_ref()[0x4000 + 0x2000..][..4],
+        &[0xaa, 0xbb, 0xcc, 0xdd]
+    );
 
     Ok(())
 }
