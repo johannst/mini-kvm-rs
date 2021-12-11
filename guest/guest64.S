@@ -9,7 +9,7 @@
 
     // Trigger `KVM_EXIT_IO:KVM_EXIT_IO_IN` by reading byte to memory from input port.
     mov dx, 0x1000          // Input port.
-    lea di, [in_dest]       // Destination address.
+    lea di, [rip + in_dest] // Destination address.
     insb                    // Read byte from input port dx to ds:di.
 
     // Write to allocated virtual addresses.
