@@ -47,6 +47,20 @@ int main() {
     // param: struct kvm_sregs
     // ret  : 0 success, -1 error
     printf("pub(crate) const KVM_SET_SREGS : u64 = 0x%lx;\n", KVM_SET_SREGS);
+    // param: struct kvm_debugregs
+    // ret  : 0 success, -1 error
+    printf("pub(crate) const KVM_GET_DEBUGREGS : u64 = 0x%lx;\n", KVM_GET_DEBUGREGS);
+    // param: struct kvm_debugregs
+    // ret  : 0 success, -1 error
+    printf("pub(crate) const KVM_SET_DEBUGREGS : u64 = 0x%lx;\n", KVM_SET_DEBUGREGS);
+    // param: struct kvm_guest_debug
+    // ret  : 0 success, -1 error
+    printf("pub(crate) const KVM_SET_GUEST_DEBUG : u64 = 0x%lx;\n", KVM_SET_GUEST_DEBUG);
+
+    /* struct kvm_guest_debug constants */
+
+    printf("pub(crate) const KVM_GUESTDBG_ENABLE : u32 = 0x%x;\n", KVM_GUESTDBG_ENABLE);
+    printf("pub(crate) const KVM_GUESTDBG_SINGLESTEP : u32 = 0x%x;\n", KVM_GUESTDBG_SINGLESTEP);
 
     /* struct kvm_run constants */
 
@@ -55,6 +69,7 @@ int main() {
     printf("pub(crate) const KVM_EXIT_IO_IN : u64 = 0x%x;\n", KVM_EXIT_IO_IN);
     printf("pub(crate) const KVM_EXIT_IO_OUT : u64 = 0x%x;\n", KVM_EXIT_IO_OUT);
     printf("pub(crate) const KVM_EXIT_MMIO : u64 = 0x%x;\n", KVM_EXIT_MMIO);
+    printf("pub(crate) const KVM_EXIT_DEBUG : u64 = 0x%x;\n", KVM_EXIT_DEBUG);
 
     /* Capabilities */
 
@@ -99,7 +114,14 @@ int main() {
     printf("#[cfg(test)] const TEST_KVM_RUN_ALIGN : usize = %ld;\n", alignof(struct kvm_run));
     printf("#[cfg(test)] const TEST_KVM_RUN_IO_SIZE : usize = %ld;\n", sizeof(((struct kvm_run*)0)->io));
     printf("#[cfg(test)] const TEST_KVM_RUN_MMIO_SIZE : usize = %ld;\n", sizeof(((struct kvm_run*)0)->mmio));
+    printf("#[cfg(test)] const TEST_KVM_RUN_DEBUG_SIZE : usize = %ld;\n", sizeof(((struct kvm_run*)0)->debug));
     printf("#[cfg(test)] const TEST_KVM_RUN_UNION_S_SIZE : usize = %ld;\n", sizeof(((struct kvm_run*)0)->s));
+    printf("#[cfg(test)] const TEST_KVM_DEBUGREGS_SIZE: usize = %ld;\n", sizeof(struct kvm_debugregs));
+    printf("#[cfg(test)] const TEST_KVM_DEBUGREGS_ALIGN: usize = %ld;\n", alignof(struct kvm_debugregs));
+    printf("#[cfg(test)] const TEST_KVM_GUEST_DEBUG_SIZE: usize = %ld;\n", sizeof(struct kvm_guest_debug));
+    printf("#[cfg(test)] const TEST_KVM_GUEST_DEBUG_ALIGN: usize = %ld;\n", alignof(struct kvm_guest_debug));
+    printf("#[cfg(test)] const TEST_KVM_GUEST_DEBUG_ARCH_SIZE: usize = %ld;\n", sizeof(struct kvm_guest_debug_arch));
+    printf("#[cfg(test)] const TEST_KVM_GUEST_DEBUG_ARCH_ALIGN: usize = %ld;\n", alignof(struct kvm_guest_debug_arch));
 
     return 0;
 }

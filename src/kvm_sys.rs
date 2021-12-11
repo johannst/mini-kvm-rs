@@ -91,6 +91,32 @@ pub(crate) struct kvm_userspace_memory_region {
     pub userspace_addr: u64,
 }
 
+#[cfg(target_arch = "x86_64")]
+#[repr(C)]
+#[derive(Default, Debug)]
+pub struct kvm_debugregs {
+    pub db: [u64; 4],
+    pub dr6: u64,
+    pub dr7: u64,
+    pub flags: u64,
+    pub reserved: [u64; 9],
+}
+
+#[repr(C)]
+#[derive(Default, Debug)]
+pub(crate) struct kvm_guest_debug {
+    pub control: u32,
+    pad: u32,
+    pub arch: kvm_guest_debug_arch,
+}
+
+#[cfg(target_arch = "x86_64")]
+#[repr(C)]
+#[derive(Default, Debug)]
+pub(crate) struct kvm_guest_debug_arch {
+    pub debugreg: [u64; 8],
+}
+
 #[repr(C)]
 pub(crate) struct kvm_run {
     request_interrupt_window: u8,
@@ -127,11 +153,23 @@ pub(crate) struct kvm_run_mmio {
     pub is_write: u8,
 }
 
+#[cfg(target_arch = "x86_64")]
+#[repr(C)]
+#[derive(Copy, Clone, Debug)]
+pub(crate) struct kvm_run_debug {
+    pub exception: u32,
+    pad: u32,
+    pub pc: u64,
+    pub dr6: u64,
+    pub dr7: u64,
+}
+
 // Only add the union fields used here.
 #[repr(C)]
 pub(crate) union kvm_run_union {
     pub io: kvm_run_io,
     pub mmio: kvm_run_mmio,
+    pub debug: kvm_run_debug,
     padding: [u8; 256],
 }
 
@@ -193,5 +231,40 @@ mod tests {
         assert_eq!(mem::size_of::<kvm_run_io>(), TEST_KVM_RUN_IO_SIZE);
         assert_eq!(mem::size_of::<kvm_run_mmio>(), TEST_KVM_RUN_MMIO_SIZE);
         assert_eq!(mem::size_of::<kvm_run_union_s>(), TEST_KVM_RUN_UNION_S_SIZE);
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn check_kvm_run_x86() {
+        assert_eq!(mem::size_of::<kvm_run_debug>(), TEST_KVM_RUN_DEBUG_SIZE);
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn check_kvm_debugregs() {
+        assert_eq!(mem::size_of::<kvm_debugregs>(), TEST_KVM_DEBUGREGS_SIZE);
+        assert_eq!(mem::align_of::<kvm_debugregs>(), TEST_KVM_DEBUGREGS_ALIGN);
+    }
+
+    #[test]
+    fn check_kvm_guest_dbg() {
+        assert_eq!(mem::size_of::<kvm_guest_debug>(), TEST_KVM_GUEST_DEBUG_SIZE);
+        assert_eq!(
+            mem::align_of::<kvm_guest_debug>(),
+            TEST_KVM_GUEST_DEBUG_ALIGN
+        );
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[test]
+    fn check_kvm_guest_dbg_arch() {
+        assert_eq!(
+            mem::size_of::<kvm_guest_debug_arch>(),
+            TEST_KVM_GUEST_DEBUG_ARCH_SIZE
+        );
+        assert_eq!(
+            mem::align_of::<kvm_guest_debug_arch>(),
+            TEST_KVM_GUEST_DEBUG_ARCH_ALIGN
+        );
     }
 }
