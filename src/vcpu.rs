@@ -108,11 +108,40 @@ impl Vcpu {
     ///
     /// [kvm-set-debugregs]:
     /// https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-set-debugregs
+    #[cfg(target_arch = "x86_64")]
     pub fn set_debugregs(&self, dregs: kvm_sys::kvm_debugregs) -> io::Result<()> {
         ioctl(
             &self.vcpu,
             kvm_sys::KVM_SET_DEBUGREGS,
             &dregs as *const _ as u64,
+        )
+        .map(|_| ())
+    }
+
+    /// Enable or disable guest single steppig (debug) with the
+    /// [`KVM_GUESTDBG_ENABLE`][kvm-guest-debug] ioctl.
+    ///
+    /// [kvm-guest-debug]: https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-set-guest-debug
+    #[cfg(target_arch = "x86_64")]
+    pub fn set_single_step(&self, enable: bool) -> io::Result<()> {
+        let mut dbg = kvm_sys::kvm_guest_debug::default();
+
+        if enable {
+            // Enable guest debugging and single stepping.
+            dbg.control = kvm_sys::KVM_GUESTDBG_ENABLE | kvm_sys::KVM_GUESTDBG_SINGLESTEP;
+        }
+
+        // Initialize debug registers based on current VCPUs debug register values.
+        let dregs = self.get_debugregs()?;
+        dbg.arch.debugreg[0..4].copy_from_slice(&dregs.db);
+        // DR4-DR5 are reserved.
+        dbg.arch.debugreg[6] = dregs.dr6;
+        dbg.arch.debugreg[7] = dregs.dr7;
+
+        ioctl(
+            &self.vcpu,
+            kvm_sys::KVM_SET_GUEST_DEBUG,
+            &dbg as *const _ as u64,
         )
         .map(|_| ())
     }

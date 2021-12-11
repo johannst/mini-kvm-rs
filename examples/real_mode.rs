@@ -51,6 +51,7 @@ fn main() -> std::io::Result<()> {
                     data
                 );
             }
+            KvmExit::Debug(_pc) => {}
         };
     }
 
