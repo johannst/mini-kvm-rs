@@ -16,6 +16,8 @@ mod x86_64 {
     pub const RFLAGS_ZF: u64 = 1 << 6;
     /// Sign flag.
     pub const RFLAGS_SF: u64 = 1 << 7;
+    /// Trap flag.
+    pub const RFLAGS_TF: u64 = 1 << 8;
     /// Sign flag.
     pub const RFLAGS_IF: u64 = 1 << 9;
     /// Direction flag.
@@ -32,6 +34,7 @@ mod x86_64 {
     pub const fn rflags_af(r: u64) -> u64   { (r & RFLAGS_AF)   >> 4 }
     pub const fn rflags_zf(r: u64) -> u64   { (r & RFLAGS_ZF)   >> 6 }
     pub const fn rflags_sf(r: u64) -> u64   { (r & RFLAGS_SF)   >> 7 }
+    pub const fn rflags_tf(r: u64) -> u64   { (r & RFLAGS_TF)   >> 8 }
     pub const fn rflags_if(r: u64) -> u64   { (r & RFLAGS_IF)   >> 9 }
     pub const fn rflags_df(r: u64) -> u64   { (r & RFLAGS_DF)   >> 10 }
     pub const fn rflags_of(r: u64) -> u64   { (r & RFLAGS_OF)   >> 11 }

@@ -12,7 +12,7 @@ impl fmt::Display for kvm_regs {
              r8 : {:#018x} r9 : {:#018x} r10: {:#018x} r11: {:#018x}\n\
              r12: {:#018x} r13: {:#018x} r14: {:#018x} r15: {:#018x}\n\
              rsp: {:#018x} rbp: {:#018x}\n\
-             rip: {:#018x} rfl: {:#018x} O({}) D({}) I({}) S({}) Z({}) P({}) C({})",
+             rip: {:#018x} rfl: {:#018x} O({}) D({}) I({}) T({}) S({}) Z({}) P({}) C({})",
             self.rax,
             self.rbx,
             self.rcx,
@@ -34,6 +34,7 @@ impl fmt::Display for kvm_regs {
             rflags_of(self.rflags),
             rflags_df(self.rflags),
             rflags_if(self.rflags),
+            rflags_tf(self.rflags),
             rflags_sf(self.rflags),
             rflags_zf(self.rflags),
             rflags_pf(self.rflags),
