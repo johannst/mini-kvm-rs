@@ -18,6 +18,7 @@ pub enum KvmExit<'cpu> {
     IoOut(u16, &'cpu [u8]),
     MmioRead(u64, &'cpu mut [u8]),
     MmioWrite(u64, &'cpu [u8]),
+    Debug(u64),
 }
 
 /// Wrapper for VCPU ioctls.
@@ -86,6 +87,36 @@ impl Vcpu {
         .map(|_| ())
     }
 
+    /// Get the debug registers with the [`KVM_GET_DEBUGREGS`][kvm-get-debugregs] ioctl in form of
+    /// [`kvm_debugregs`](crate::kvm_sys::kvm_debugregs).
+    ///
+    /// [kvm-get-debugregs]:
+    /// https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-get-debugregs
+    #[cfg(target_arch = "x86_64")]
+    pub fn get_debugregs(&self) -> io::Result<kvm_sys::kvm_debugregs> {
+        let mut dregs = kvm_sys::kvm_debugregs::default();
+        ioctl(
+            &self.vcpu,
+            kvm_sys::KVM_GET_DEBUGREGS,
+            &mut dregs as *mut _ as u64,
+        )?;
+        Ok(dregs)
+    }
+
+    /// Set the debug registers with the [`KVM_SET_DEBUGREGS`][kvm-set-debugregs] ioctl in form of
+    /// [`kvm_debugregs`](crate::kvm_sys::kvm_debugregs).
+    ///
+    /// [kvm-set-debugregs]:
+    /// https://www.kernel.org/doc/html/latest/virt/kvm/api.html#kvm-set-debugregs
+    pub fn set_debugregs(&self, dregs: kvm_sys::kvm_debugregs) -> io::Result<()> {
+        ioctl(
+            &self.vcpu,
+            kvm_sys::KVM_SET_DEBUGREGS,
+            &dregs as *const _ as u64,
+        )
+        .map(|_| ())
+    }
+
     /// Run the guest VCPU with the [`KVM_RUN`][kvm-run] ioctl until it exits with one of the exit
     /// reasons described in [`KvmExit`](crate::vcpu::KvmExit).
     ///
@@ -127,6 +158,12 @@ impl Vcpu {
                     1 => Ok(KvmExit::MmioWrite(mmio.phys_addr, &mmio.data[..len])),
                     _ => unreachable!(),
                 }
+            }
+            kvm_sys::KVM_EXIT_DEBUG => {
+                // Safe to use union `debug` field, as Kernel instructed us to.
+                let debug = unsafe { kvm_run.inner.debug };
+
+                Ok(KvmExit::Debug(debug.pc))
             }
             r @ _ => {
                 todo!("KVM_EXIT_... (exit_reason={}) not implemented!", r)
