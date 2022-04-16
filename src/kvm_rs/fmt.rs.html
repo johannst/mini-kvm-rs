@@ -1,6 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/fmt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fmt.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../kvm_rs/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/fmt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fmt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../kvm_rs/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../kvm_rs/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../kvm_rs/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -129,14 +132,13 @@
 <span id="127">127</span>
 <span id="128">128</span>
 <span id="129">129</span>
-</pre><pre class="rust">
-<span class="kw">use</span> <span class="ident">std::fmt</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::kvm_sys</span>::{<span class="ident">kvm_dtable</span>, <span class="ident">kvm_regs</span>, <span class="ident">kvm_segment</span>, <span class="ident">kvm_sregs</span>};
-<span class="kw">use</span> <span class="kw">crate</span><span class="ident">::x86_64</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::kvm_sys</span>::{<span class="ident">kvm_dtable</span>, <span class="ident">kvm_regs</span>, <span class="ident">kvm_segment</span>, <span class="ident">kvm_sregs</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::x86_64</span>::<span class="kw-2">*</span>;
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">kvm_regs</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;rax: {:#018x} rbx: {:#018x} rcx: {:#018x} rdx: {:#018x}\n\
@@ -175,15 +177,15 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">kvm_segment</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">present</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">present</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{:#04x} P(0)&quot;</span>, <span class="self">self</span>.<span class="ident">selector</span>)
         } <span class="kw">else</span> {
             <span class="macro">write!</span>(
                 <span class="ident">f</span>,
                 <span class="string">&quot;{:#06x} T({}) RPL({}) BASE({:#010x}) LIMIT({:#07x}) P(1) S({}) DPL({}) DB({}) L({}) TYPE({})&quot;</span>,
                 <span class="self">self</span>.<span class="ident">selector</span>,
-                <span class="kw">if</span> <span class="ident">seg_selector_ti</span>(<span class="self">self</span>.<span class="ident">selector</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">seg_selector_ti</span>(<span class="self">self</span>.<span class="ident">selector</span>) <span class="op">==</span> <span class="number">0</span> {
                     <span class="string">&quot;GDT&quot;</span>
                 } <span class="kw">else</span> {
                     <span class="string">&quot;LDT&quot;</span>
@@ -196,23 +198,23 @@
                 <span class="self">self</span>.<span class="ident">db</span>,
                 <span class="self">self</span>.<span class="ident">l</span>,
                 <span class="kw">match</span> <span class="self">self</span>.<span class="ident">type_</span> {
-                    <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:R---&quot;</span>,
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:R-A-&quot;</span>,
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:RW--&quot;</span>,
-                    <span class="number">3</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:RWA-&quot;</span>,
-                    <span class="number">4</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:R--E&quot;</span>,
-                    <span class="number">5</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:R-AE&quot;</span>,
-                    <span class="number">6</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:RW-E&quot;</span>,
-                    <span class="number">7</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;D:RWAE&quot;</span>,
-                    <span class="number">8</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:X---&quot;</span>,
-                    <span class="number">9</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:X-A-&quot;</span>,
-                    <span class="number">10</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:XR--&quot;</span>,
-                    <span class="number">11</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:XRA-&quot;</span>,
-                    <span class="number">12</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:X--C&quot;</span>,
-                    <span class="number">13</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:X-AC&quot;</span>,
-                    <span class="number">14</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:XR-C&quot;</span>,
-                    <span class="number">15</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;C:XRAC&quot;</span>,
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable!</span>(),
+                    <span class="number">0</span> =&gt; <span class="string">&quot;D:R---&quot;</span>,
+                    <span class="number">1</span> =&gt; <span class="string">&quot;D:R-A-&quot;</span>,
+                    <span class="number">2</span> =&gt; <span class="string">&quot;D:RW--&quot;</span>,
+                    <span class="number">3</span> =&gt; <span class="string">&quot;D:RWA-&quot;</span>,
+                    <span class="number">4</span> =&gt; <span class="string">&quot;D:R--E&quot;</span>,
+                    <span class="number">5</span> =&gt; <span class="string">&quot;D:R-AE&quot;</span>,
+                    <span class="number">6</span> =&gt; <span class="string">&quot;D:RW-E&quot;</span>,
+                    <span class="number">7</span> =&gt; <span class="string">&quot;D:RWAE&quot;</span>,
+                    <span class="number">8</span> =&gt; <span class="string">&quot;C:X---&quot;</span>,
+                    <span class="number">9</span> =&gt; <span class="string">&quot;C:X-A-&quot;</span>,
+                    <span class="number">10</span> =&gt; <span class="string">&quot;C:XR--&quot;</span>,
+                    <span class="number">11</span> =&gt; <span class="string">&quot;C:XRA-&quot;</span>,
+                    <span class="number">12</span> =&gt; <span class="string">&quot;C:X--C&quot;</span>,
+                    <span class="number">13</span> =&gt; <span class="string">&quot;C:X-AC&quot;</span>,
+                    <span class="number">14</span> =&gt; <span class="string">&quot;C:XR-C&quot;</span>,
+                    <span class="number">15</span> =&gt; <span class="string">&quot;C:XRAC&quot;</span>,
+                    <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
                 }
             )
         }
@@ -220,13 +222,13 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">kvm_dtable</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;BASE({:#018x}) LIMIT({:#07x})&quot;</span>, <span class="self">self</span>.<span class="ident">base</span>, <span class="self">self</span>.<span class="ident">limit</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">kvm_sregs</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="macro">write!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;cs  : {}\n\
@@ -259,5 +261,6 @@
         )
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvm_rs" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="kvm_rs" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
+</body></html>
