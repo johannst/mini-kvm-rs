@@ -26,7 +26,7 @@ impl Vm {
 
     /// Map memory from userspace into the VM as `guest physical` memory starting at address
     /// `phys_addr`.
-    /// The underlying operation is the [`KVM_SET_USER_MEMORY_REGION`][kmv-set-user-memory-region]
+    /// The underlying operation is the [`KVM_SET_USER_MEMORY_REGION`][kvm-set-user-memory-region]
     /// ioctl.
     ///
     /// # Safety
