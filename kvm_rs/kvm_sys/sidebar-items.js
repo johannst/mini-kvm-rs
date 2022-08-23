@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["kvm_dtable",""],["kvm_regs",""],["kvm_segment",""],["kvm_sregs",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["kvm_debugregs",""],["kvm_dtable",""],["kvm_regs",""],["kvm_segment",""],["kvm_sregs",""]]};

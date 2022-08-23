@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["KvmExit","Exit reasons for the [`Vcpu::run`][crate::vcpu::Vcpu::run] function."]],"struct":[["Vcpu","Wrapper for VCPU ioctls."]]});
+window.SIDEBAR_ITEMS = {"enum":[["KvmExit","Exit reasons for the [`Vcpu::run`][crate::vcpu::Vcpu::run] function."]],"struct":[["Vcpu","Wrapper for VCPU ioctls."]]};
