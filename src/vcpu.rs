@@ -5,7 +5,7 @@ use std::io;
 
 use crate::{ioctl, kvm_sys, KvmRun};
 
-/// Exit reasons for the [`Vcpu::kvm_run`][crate::vcpu::Vcpu::kvm_run] function.
+/// Exit reasons for the [`Vcpu::run`][crate::vcpu::Vcpu::run] function.
 ///
 /// Details for the different exit reasons can be found in the [`kvm_run`
 /// structure][kvm-run-struct] description.
