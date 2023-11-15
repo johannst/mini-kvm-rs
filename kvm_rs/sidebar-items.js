@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["cap","Definitions of KVM capabilities."],["kvm","KVM system ioctls."],["kvm_sys","Definitions of the system header `<linux/kvm.h>`."],["vcpu","VCPU system ioctls."],["vm","VM system ioctls."],["x86_64","`x86_64` flags and bitfields."]],"struct":[["PhysAddr","Strong type representing physical addresses."],["UserMem","Wrapper to safely allocate memory for guest VMs."]]};
+window.SIDEBAR_ITEMS = {"mod":["cap","kvm","kvm_sys","vcpu","vm","x86_64"],"struct":["PhysAddr","UserMem"]};

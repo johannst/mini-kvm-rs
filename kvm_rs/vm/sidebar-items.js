@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Vm","Wrapper for VM ioctls."]]};
+window.SIDEBAR_ITEMS = {"struct":["Vm"]};
