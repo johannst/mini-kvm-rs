@@ -18,6 +18,13 @@
     mov byte ptr ds:[0x2002], 0xcc
     mov byte ptr ds:[0x2003], 0xdd
 
+    // Write to virtually mapped by not physically mapped address, this should
+    // trigger a `KVM_EXIT_MMIO (w)`.
+    mov byte ptr ds:[0x4000], 0x12
+    mov byte ptr ds:[0x4001], 0x34
+    mov byte ptr ds:[0x4002], 0x56
+    mov byte ptr ds:[0x4003], 0x78
+
     // Trigger `KVM_EXIT_HLT`.
     hlt
 

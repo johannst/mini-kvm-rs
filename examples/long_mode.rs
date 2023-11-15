@@ -76,8 +76,11 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     // 0x3000 | PT    |        VirtAddr
     // 0x4000 +-------+ <----- +-------+ 0x0000
     //        | Guest |        | Guest |
-    //        | (16K) |        | (16K) |
-    // 0x8000 +-------+ <----- +-------+ 0x4000
+    //        | (16K) |        | (20K) |
+    // 0x8000 +-------+        |       | 0x4000
+    //        UN-MAPPED        |       |
+    //          ( 4k)          |       |
+    // 0x9000 +-------+ <----- +-------+ 0x5000
     //
     // PML4 : Page Map Level 4
     // PDP  : Page Directory Pointer
@@ -85,7 +88,7 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     // PT   : Page Table
     //
     // PML4, PDP, PD will contain a single entry at index 0.
-    // PT will contain 4 page table entries (PTE) at index {0,1,2,3} -> 4 * 4K = 16K.
+    // PT will contain 5 page table entries (PTE) at index {0,1,2,3,4} -> 5 * 4K = 20K.
 
     let mut w = |addr: PhysAddr, val: u64| mem.load(addr, &val.to_le_bytes());
 
@@ -105,6 +108,11 @@ fn setup_long_mode_4level_paging(mem: &mut UserMem) -> PhysAddr {
     w(PhysAddr(0x3010), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x6000);
     // PTE[3] maps Virt [0x3000:0x3fff] -> Phys [0x7000:0x7fff].
     w(PhysAddr(0x3018), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x7000);
+    // PTE[4] maps Virt [0x4000:0x4fff] -> Phys [0x8000:0x8fff]
+    //
+    // The PA range is not backed by a memory mapping in the VM and hence
+    // writing to the VA range from the guest should trigger a VM MMIO exit.
+    w(PhysAddr(0x3020), PAGE_ENTRY_PRESENT | PAGE_ENTRY_RW | 0x8000);
 
     // Return address of PML4.
     PhysAddr(0x0000)
