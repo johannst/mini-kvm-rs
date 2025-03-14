@@ -3,3 +3,4 @@ Cargo.lock
 sysdeps/kvm
 guest/guest16
 guest/guest64
+guest/guest64-msr

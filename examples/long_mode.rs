@@ -4,6 +4,8 @@ use kvm_rs::vcpu::KvmExit;
 use kvm_rs::x86_64::*;
 use kvm_rs::{PhysAddr, UserMem};
 
+use std::convert::TryInto;
+
 fn setup_long_mode_segments(sregs: &mut kvm_sys::kvm_sregs) {
     let code_seg = |seg: &mut kvm_sys::kvm_segment| {
         // Segment base address (unused in 64bit).
@@ -153,6 +155,8 @@ fn main() -> std::io::Result<()> {
     let mut regs = vcpu.get_regs()?;
     // Set `rip` to 0 as we want to start executing from virtual address 0.
     regs.rip = 0;
+    // Set `rsp` (stack pointer) to the end of the guests virtual address space.
+    regs.rsp = 0x4000;
     regs.rflags = 0x2;
     vcpu.set_regs(regs)?;
 
@@ -172,9 +176,19 @@ fn main() -> std::io::Result<()> {
                 // Provide some input data.
                 data.fill(0xaa);
             }
-            KvmExit::IoOut(_port, data) => {
-                let s = std::str::from_utf8(data).unwrap();
-                print!("{}", s);
+            KvmExit::IoOut(port, data) => {
+                if port == 0x42 {
+                    // Magic port to interpret any input as string.
+                    let s = std::str::from_utf8(data).unwrap();
+                    print!("{}", s);
+                } else {
+                    // By default format print bytes as hex string.
+                    let val = match data.len() {
+                        4 => u32::from_le_bytes(data.try_into().unwrap()) as u64,
+                        _ => todo!("unknown size {}", data.len()),
+                    };
+                    println!("{:x}", val);
+                }
             }
             KvmExit::MmioRead(addr, data) => {
                 println!("MMIO_READ: addr={:#x} len={}", addr, data.len());
