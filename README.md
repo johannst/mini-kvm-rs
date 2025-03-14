@@ -1,6 +1,6 @@
 # kvm-rs
 
-[![Rust][wf-badge]][wf-output] [![Rustdoc][doc-badge]][doc-html]
+[![Workflow][wf-badge]][wf-output] [![Rustdoc][doc-badge]][doc-html]
 
 [wf-output]: https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml
 [wf-badge]: https://github.com/johannst/mini-kvm-rs/actions/workflows/rust.yml/badge.svg
