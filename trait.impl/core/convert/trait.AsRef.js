@@ -1,5 +1,5 @@
 (function() {
-    var implementors = Object.fromEntries([["kvm_rs",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.85.0/core/convert/trait.AsRef.html\" title=\"trait core::convert::AsRef\">AsRef</a>&lt;[<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.85.0/std/primitive.u8.html\">u8</a>]&gt; for <a class=\"struct\" href=\"kvm_rs/struct.UserMem.html\" title=\"struct kvm_rs::UserMem\">UserMem</a>"]]]]);
+    var implementors = Object.fromEntries([["kvm_rs",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/convert/trait.AsRef.html\" title=\"trait core::convert::AsRef\">AsRef</a>&lt;[<a class=\"primitive\" href=\"https://doc.rust-lang.org/1.86.0/std/primitive.u8.html\">u8</a>]&gt; for <a class=\"struct\" href=\"kvm_rs/struct.UserMem.html\" title=\"struct kvm_rs::UserMem\">UserMem</a>"]]]]);
     if (window.register_implementors) {
         window.register_implementors(implementors);
     } else {
