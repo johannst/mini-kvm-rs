@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 //! `x86_64` flags and bitfields.
 
 pub use x86_64::*;

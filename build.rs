@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 use std::env;
 use std::io::Write;
 use std::path::Path;

@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: MIT
+#
+# Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 ARCH16 := i8086
 ARCH64 := i386:x86-64
 

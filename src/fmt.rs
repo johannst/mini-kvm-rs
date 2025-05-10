@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 use std::fmt;
 
 use crate::kvm_sys::{kvm_dtable, kvm_regs, kvm_segment, kvm_sregs};

@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 use std::convert::{AsMut, AsRef};
 use std::io;
 use std::ops;

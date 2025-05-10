@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 use kvm_rs::kvm::Kvm;
 use kvm_rs::kvm_sys;
 use kvm_rs::vcpu::KvmExit;

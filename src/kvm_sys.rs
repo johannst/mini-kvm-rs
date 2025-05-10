@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+//
+// Copyright (c) 2021, Johannes Stoelp <dev@memzero.de>
+
 //! Definitions of the system header [`<linux/kvm.h>`][kvm-h].
 //!
 //! [kvm-h]: https://elixir.bootlin.com/linux/latest/source/include/uapi/linux/kvm.h
